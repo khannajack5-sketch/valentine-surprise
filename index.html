@@ -3,51 +3,63 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Valentine's Surprise 💖</title>
+    <title>Valentine's Surprise 💝</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;700&family=Pacifico&display=swap" rel="stylesheet">
     
     <style>
-        body, html { margin: 0; padding: 0; height: 100%; overflow: hidden; font-family: "Archivo", sans-serif; }
+        body, html { margin: 0; padding: 0; height: 100%; overflow: hidden; font-family: "Archivo", sans-serif; background-color: #ffdae9; }
         
-        /* Lock Screen */
-        #lockScreen {
-            position: fixed; inset: 0; background: #ffdae9;
-            display: flex; flex-direction: column; align-items: center; justify-content: center;
-            z-index: 1000; transition: all 0.6s ease;
+        /* Loading Screen Style */
+        #loader {
+            position: fixed; inset: 0; background: #ffdae9; 
+            display: flex; flex-direction: column; align-items: center; justify-content: center; 
+            z-index: 2000; transition: opacity 0.8s ease;
         }
+        .heart-loader { font-size: 50px; animation: beat 1s infinite; }
+        @keyframes beat { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.3); } }
 
-        #slide1, #slide2 { display: none; }
-
-        #slide1 {
-            background: linear-gradient(180deg, rgba(255, 208, 229, 1) 0%, rgba(255, 232, 242, 1) 36%, rgba(255, 255, 255, 1) 100%);
-            display: flex; flex-direction: column; align-items: center; justify-content: center;
-            height: 100vh; width: 100vw;
-        }
-
+        #lockScreen, #slide1, #slide2, #slide-letter { display: none; }
+        
+        #lockScreen { position: fixed; inset: 0; background: #ffdae9; display: flex; flex-direction: column; align-items: center; justify-content: center; z-index: 1000; transition: all 0.6s ease; }
+        .glowing-emoji { font-size: 80px; filter: drop-shadow(0 0 10px #ff30c5); animation: pulse 1.5s ease-in-out infinite; margin-bottom: 20px; }
+        @keyframes pulse { 0%, 100% { transform: scale(1); filter: drop-shadow(0 0 10px #ff30c5); } 50% { transform: scale(1.1); filter: drop-shadow(0 0 25px #ff30c5); } }
+        
+        #slide1 { background: linear-gradient(180deg, rgba(255, 208, 229, 1) 0%, rgba(255, 232, 242, 1) 36%, rgba(255, 255, 255, 1) 100%); height: 100vh; width: 100vw; display: none; flex-direction: column; align-items: center; justify-content: center; }
+        #slide-letter { background: #ffdae9; height: 100vh; width: 100vw; display: none; flex-direction: column; align-items: center; justify-content: center; padding: 20px; }
+        .letter-box { background: white; border: 4px solid #bd1e59; border-radius: 20px; padding: 30px; max-width: 500px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); position: relative; }
+        .letter-box h2 { font-family: "Pacifico", cursive; color: #bd1e59; font-size: 2rem; margin-bottom: 15px; text-align: center; }
+        #code { font-size: 1.1rem; line-height: 1.6; color: #444; min-height: 200px; margin-bottom: 20px; }
+        .bb_myname { text-align: right; font-weight: bold; color: #bd1e59; font-size: 1.2rem; }
         #slide2 { background: #101010; height: 100vh; width: 100vw; position: relative; }
         canvas { position: absolute; width: 100%; height: 100%; }
-        .namebox { color: #fff; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); text-align: center; pointer-events: none; }
+        .namebox { color: #fff; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); text-align: center; pointer-events: none; z-index: 10; }
         .namebox h1 { font-family: "Pacifico", cursive; font-size: 3.5rem; text-shadow: 0 0 20px #ff30c5; }
         .bounce2 { animation: bounce2 2s ease infinite; }
         @keyframes bounce2 { 0%, 20%, 50%, 80%, 100% { transform: translateY(0); } 40% { transform: translateY(-20px); } 60% { transform: translateY(-10px); } }
+        .btn-next { background: #bd1e59; color: white; padding: 10px 25px; border-radius: 50px; font-weight: bold; margin-top: 20px; cursor: pointer; display: none; }
     </style>
 </head>
 <body>
 
+    <div id="loader">
+        <div class="heart-loader">❤️</div>
+        <p class="mt-4 text-[#bd1e59] font-bold text-xl animate-pulse">Loading surprises for you...</p>
+    </div>
+
     <div id="lockScreen">
-        <div class="bg-white p-8 rounded-2xl shadow-xl flex flex-col items-center border-4 border-[#bd1e59]">
-            <img src="https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExOHpueGZ4bm9oN3RrZzRreXp4eHh4eHh4eHh4eHh4eHh4eHh4eHh4JmVwPXYxX2ludGVybmFsX2dpZl9ieV9pZCZjdD1n/OPU6wUKARA8AU/giphy.gif" class="h-32 mb-4">
-            <h2 class="text-2xl font-bold text-[#bd1e59] mb-4 text-center">Enter Secret Password 🔒</h2>
-            <input type="password" id="passInput" placeholder="Password here..." class="px-4 py-2 rounded-lg border-2 border-pink-300 outline-none focus:border-[#bd1e59] text-center mb-4 w-full">
-            <button onclick="checkPass()" class="bg-[#bd1e59] text-white px-8 py-3 rounded-full font-bold hover:bg-pink-700 transition-all">Unlock Surprise ❤️</button>
+        <div class="bg-white p-8 rounded-3xl shadow-2xl flex flex-col items-center border-4 border-[#bd1e59] max-w-[90%]">
+            <div class="glowing-emoji">🔐</div>
+            <h2 class="text-2xl font-bold text-[#bd1e59] mb-4 text-center">Enter Secret Password 💖</h2>
+            <input type="password" id="passInput" placeholder="Password here..." class="px-4 py-3 rounded-xl border-2 border-pink-200 outline-none focus:border-[#bd1e59] text-center mb-4 w-full text-lg">
+            <button onclick="checkPass()" class="bg-[#bd1e59] text-white px-8 py-3 rounded-full font-bold hover:bg-pink-700 transition-all w-full shadow-lg">Unlock Surprise ✨</button>
             <p id="errorMsg" class="text-red-500 mt-3 font-semibold hidden">Incorrect password! ❌</p>
         </div>
     </div>
 
     <div id="slide1">
         <div class="flex flex-col items-center p-4">
-            <img id="imageDisplay" src="./images/image1.gif" alt="Cute kitten" class="rounded-md h-[300px] object-cover" />
+            <img id="imageDisplay" src="images/image1.gif" alt="Cute animation" class="rounded-md h-[300px] object-cover" />
             <h2 id="valentineQuestion" class="text-4xl font-bold italic text-[#bd1e59] my-4 text-center">Will you be my Valentine?</h2>
             <div class="flex gap-4 pt-[20px] items-center" id="responseButtons">
                 <button id="yesButton" class="bounce2 inline-flex items-center justify-center rounded-xl text-[20px] font-medium bg-green-500 text-white px-8 py-4">Yes</button>
@@ -56,78 +68,125 @@
         </div>
     </div>
 
+    <div id="slide-letter">
+        <div class="letter-box">
+            <h2>Happy Valentine's Day Sweetheart! 🌹</h2>
+            <div id="code">My dearest pookie, every moment with you feels like a beautiful dream. You are the brightest light in my life, and I am so grateful to have you. I hope this little surprise brings a smile to your face! I love you more than words can say... ✨</div>
+            <p class="bb_myname">- Yours Forever ❤️</p>
+            <center><button id="finalNextBtn" class="btn-next">One More Surprise... 🎁</button></center>
+        </div>
+    </div>
+
     <div id="slide2">
         <canvas id="pinkboard"></canvas>
-        <div class="namebox"><h1>Rayu❤️yuvii</h1></div>
+        <div class="namebox"><h1>Rayu ❤️ Yuvii</h1></div>
     </div>
+
+    <audio id="main_audio" loop>
+        <source src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3" type="audio/mpeg">
+    </audio>
 
     <script type="module">
         import confetti from 'https://cdn.skypack.dev/canvas-confetti';
 
-        // Password check
+        const loader = document.getElementById('loader');
+        const lock = document.getElementById('lockScreen');
+        const slide1 = document.getElementById('slide1');
+        const slideLetter = document.getElementById('slide-letter');
+        const slide2 = document.getElementById('slide2');
+        const yesBtn = document.getElementById('yesButton');
+        const noBtn = document.getElementById('noButton');
+        const finalNextBtn = document.getElementById('finalNextBtn');
+        const imageDisplay = document.getElementById('imageDisplay');
+        const valentineQuestion = document.getElementById('valentineQuestion');
+        const audio = document.getElementById('main_audio');
+
+        const imagePaths = [
+            "images/image1.gif", "images/image2.gif", "images/image3.gif",
+            "images/image4.gif", "images/image5.gif", "images/image6.gif", "images/image7.gif"
+        ];
+
+        // --- 5 Second Timer for Loading ---
+        window.addEventListener('load', () => {
+            setTimeout(() => {
+                loader.style.opacity = '0';
+                setTimeout(() => {
+                    loader.style.display = 'none';
+                    lock.style.display = 'flex';
+                }, 800);
+            }, 5000); // 5000ms = 5 seconds
+        });
+
         window.checkPass = function() {
             const userInput = document.getElementById('passInput').value;
-            const correctPass = "pookie"; // 🔑 Yahan apna password change karein
-
-            if(userInput.toLowerCase() === correctPass) {
-                const lock = document.getElementById('lockScreen');
+            if(userInput.toLowerCase() === "pookie") {
                 lock.style.opacity = '0';
                 setTimeout(() => {
                     lock.style.display = 'none';
-                    document.getElementById('slide1').style.display = 'flex';
+                    slide1.style.display = 'flex';
+                    audio.play().catch(e => console.log("Audio ready"));
                 }, 600);
             } else {
                 document.getElementById('errorMsg').classList.remove('hidden');
+                setTimeout(() => document.getElementById('errorMsg').classList.add('hidden'), 2000);
             }
         }
-
-        const yesBtn = document.getElementById('yesButton');
-        const noBtn = document.getElementById('noButton');
-        const slide1 = document.getElementById('slide1');
-        const slide2 = document.getElementById('slide2');
-        const imageDisplay = document.getElementById('imageDisplay');
-        const valentineQuestion = document.getElementById('valentineQuestion');
 
         let noCount = 0;
         let buttonHeight = 48;
         let buttonWidth = 80;
         let fontSize = 20;
 
-        // Folder ke paths wapas add kar diye hain
-        const imagePaths = [
-            "./images/image1.gif",
-            "./images/image2.gif",
-            "./images/image3.gif",
-            "./images/image4.gif",
-            "./images/image5.gif",
-            "./images/image6.gif",
-            "./images/image7.gif"
-        ];
-
         noBtn.addEventListener('click', () => {
-            if (noCount < 5) {
+            if (noCount < 6) {
                 noCount++;
-                imageDisplay.src = imagePaths[noCount];
+                imageDisplay.src = imagePaths[noCount] || imagePaths[0];
                 buttonHeight += 20; buttonWidth += 35; fontSize += 10;
                 yesBtn.style.height = `${buttonHeight}px`;
                 yesBtn.style.width = `${buttonWidth}px`;
                 yesBtn.style.fontSize = `${fontSize}px`;
-                noBtn.textContent = ["No", "Are you sure?", "Pookie please", "Don't do this!", "Breaking my heart", "I'm gonna cry..."][noCount];
+                noBtn.textContent = ["No", "Are you sure?", "Pookie please 🥺", "Don't do this! 💔", "Breaking my heart...", "I'm gonna cry...", "Last chance! 😭"][noCount];
             }
         });
 
         yesBtn.addEventListener('click', () => {
-            imageDisplay.src = './images/image7.gif'; 
+            imageDisplay.src = imagePaths[6]; 
             confetti(); 
-            valentineQuestion.textContent = "Yayyyy! I knew it! ❤️";
+            valentineQuestion.innerHTML = "Yayyyy!<br>Happy Valentine's Day Sweetheart! ❤️";
             setTimeout(() => {
                 slide1.style.opacity = '0';
                 setTimeout(() => {
                     slide1.style.display = 'none';
-                    slide2.style.display = 'block';
-                    startHeartAnimation(); 
-                }, 800);
+                    slideLetter.style.display = 'flex';
+                    startTypewriter();
+                }, 1000);
             }, 2000);
+        });
+
+        function startTypewriter() {
+            const codeBox = document.getElementById("code");
+            const text = codeBox.innerHTML;
+            codeBox.innerHTML = "";
+            let b = 0;
+            const timer = setInterval(function () {
+                let f = text.substr(b, 1);
+                b = (f == "<") ? text.indexOf(">", b) + 1 : b + 1;
+                codeBox.innerHTML = text.substring(0, b) + (b & 1 ? "_" : "");
+                if (b >= text.length) { 
+                    clearInterval(timer); 
+                    codeBox.innerHTML = text; 
+                    finalNextBtn.style.display = "block"; 
+                }
+            }, 50);
+        }
+
+        finalNextBtn.addEventListener('click', () => {
+            slideLetter.style.opacity = '0';
+            setTimeout(() => { 
+                slideLetter.style.display = 'none'; 
+                slide2.style.display = 'block'; 
+                startHeartAnimation(); 
+            }, 800);
         });
 
         function startHeartAnimation() {
