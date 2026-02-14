@@ -10,63 +10,76 @@
     <style>
         body, html { margin: 0; padding: 0; height: 100%; overflow: hidden; font-family: "Archivo", sans-serif; }
         
-        /* Slide 1: Question Screen */
+        /* Lock Screen */
+        #lockScreen {
+            position: fixed; inset: 0; background: #ffdae9;
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            z-index: 1000; transition: all 0.6s ease;
+        }
+
+        #slide1, #slide2 { display: none; }
+
         #slide1 {
             background: linear-gradient(180deg, rgba(255, 208, 229, 1) 0%, rgba(255, 232, 242, 1) 36%, rgba(255, 255, 255, 1) 100%);
             display: flex; flex-direction: column; align-items: center; justify-content: center;
-            height: 100vh; width: 100vw; transition: opacity 0.8s ease;
+            height: 100vh; width: 100vw;
         }
 
-        /* Slide 2: Heart Animation */
-        #slide2 {
-            background: #101010;
-            display: none; height: 100vh; width: 100vw; position: relative;
-        }
-
+        #slide2 { background: #101010; height: 100vh; width: 100vw; position: relative; }
         canvas { position: absolute; width: 100%; height: 100%; }
-
-        .namebox {
-            color: #fff; position: absolute; top: 50%; left: 50%;
-            transform: translate(-50%, -50%); text-align: center; pointer-events: none;
-        }
-        .namebox h1 { font-family: "Pacifico", cursive; font-size: 3.5rem; margin: 0; text-shadow: 0 0 20px #ff30c5; }
-        
-        .copy-link { position: absolute; bottom: 10%; left: 50%; transform: translateX(-50%); }
-        .copy-link a { color: #ff30c5; text-decoration: none; font-size: 1.2rem; }
-
+        .namebox { color: #fff; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); text-align: center; pointer-events: none; }
+        .namebox h1 { font-family: "Pacifico", cursive; font-size: 3.5rem; text-shadow: 0 0 20px #ff30c5; }
         .bounce2 { animation: bounce2 2s ease infinite; }
-        @keyframes bounce2 {
-            0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
-            40% { transform: translateY(-20px); }
-            60% { transform: translateY(-10px); }
-        }
+        @keyframes bounce2 { 0%, 20%, 50%, 80%, 100% { transform: translateY(0); } 40% { transform: translateY(-20px); } 60% { transform: translateY(-10px); } }
     </style>
 </head>
 <body>
+
+    <div id="lockScreen">
+        <div class="bg-white p-8 rounded-2xl shadow-xl flex flex-col items-center border-4 border-[#bd1e59]">
+            <img src="https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExOHpueGZ4bm9oN3RrZzRreXp4eHh4eHh4eHh4eHh4eHh4eHh4eHh4JmVwPXYxX2ludGVybmFsX2dpZl9ieV9pZCZjdD1n/OPU6wUKARA8AU/giphy.gif" class="h-32 mb-4">
+            <h2 class="text-2xl font-bold text-[#bd1e59] mb-4 text-center">Enter Secret Password 🔒</h2>
+            <input type="password" id="passInput" placeholder="Password here..." class="px-4 py-2 rounded-lg border-2 border-pink-300 outline-none focus:border-[#bd1e59] text-center mb-4 w-full">
+            <button onclick="checkPass()" class="bg-[#bd1e59] text-white px-8 py-3 rounded-full font-bold hover:bg-pink-700 transition-all">Unlock Surprise ❤️</button>
+            <p id="errorMsg" class="text-red-500 mt-3 font-semibold hidden">Incorrect password! ❌</p>
+        </div>
+    </div>
 
     <div id="slide1">
         <div class="flex flex-col items-center p-4">
             <img id="imageDisplay" src="./images/image1.gif" alt="Cute kitten" class="rounded-md h-[300px] object-cover" />
             <h2 id="valentineQuestion" class="text-4xl font-bold italic text-[#bd1e59] my-4 text-center">Will you be my Valentine?</h2>
             <div class="flex gap-4 pt-[20px] items-center" id="responseButtons">
-                <button id="yesButton" class="bounce2 inline-flex items-center justify-center rounded-xl text-[20px] font-medium bg-green-500 text-white px-8 py-4 hover:bg-green-400 transition-all duration-300">Yes</button>
-                <button id="noButton" class="inline-flex items-center justify-center rounded-xl text-[20px] font-medium bg-red-500 text-white px-4 py-2 hover:bg-red-700 transition-all duration-300">No</button>
+                <button id="yesButton" class="bounce2 inline-flex items-center justify-center rounded-xl text-[20px] font-medium bg-green-500 text-white px-8 py-4">Yes</button>
+                <button id="noButton" class="inline-flex items-center justify-center rounded-xl text-[20px] font-medium bg-red-500 text-white px-4 py-2">No</button>
             </div>
         </div>
     </div>
 
     <div id="slide2">
         <canvas id="pinkboard"></canvas>
-        <div class="namebox">
-            <h1>Rayu❤️yuvii</h1>
-        </div>
-        <div class="copy-link">
-            <a href="https://www.instagram.com/raviiiii______x">@raviiiii______x</a>
-        </div>
+        <div class="namebox"><h1>Rayu❤️yuvii</h1></div>
     </div>
 
     <script type="module">
         import confetti from 'https://cdn.skypack.dev/canvas-confetti';
+
+        // Password check
+        window.checkPass = function() {
+            const userInput = document.getElementById('passInput').value;
+            const correctPass = "pookie"; // 🔑 Yahan apna password change karein
+
+            if(userInput.toLowerCase() === correctPass) {
+                const lock = document.getElementById('lockScreen');
+                lock.style.opacity = '0';
+                setTimeout(() => {
+                    lock.style.display = 'none';
+                    document.getElementById('slide1').style.display = 'flex';
+                }, 600);
+            } else {
+                document.getElementById('errorMsg').classList.remove('hidden');
+            }
+        }
 
         const yesBtn = document.getElementById('yesButton');
         const noBtn = document.getElementById('noButton');
@@ -80,7 +93,7 @@
         let buttonWidth = 80;
         let fontSize = 20;
 
-        // Aapki images ke paths
+        // Folder ke paths wapas add kar diye hain
         const imagePaths = [
             "./images/image1.gif",
             "./images/image2.gif",
@@ -91,19 +104,15 @@
             "./images/image7.gif"
         ];
 
-        noBtn.addEventListener('click', function () {
+        noBtn.addEventListener('click', () => {
             if (noCount < 5) {
                 noCount++;
-                imageDisplay.src = imagePaths[noCount]; // Pic change hogi
-                
-                buttonHeight += 20;
-                buttonWidth += 35;
-                fontSize += 10;
+                imageDisplay.src = imagePaths[noCount];
+                buttonHeight += 20; buttonWidth += 35; fontSize += 10;
                 yesBtn.style.height = `${buttonHeight}px`;
                 yesBtn.style.width = `${buttonWidth}px`;
                 yesBtn.style.fontSize = `${fontSize}px`;
-                
-                noBtn.textContent = ["No", "Are you sure?", "Pookie please", "Don't do this to me :(", "You're breaking my heart", "I'm gonna cry..."][noCount];
+                noBtn.textContent = ["No", "Are you sure?", "Pookie please", "Don't do this!", "Breaking my heart", "I'm gonna cry..."][noCount];
             }
         });
 
@@ -111,8 +120,6 @@
             imageDisplay.src = './images/image7.gif'; 
             confetti(); 
             valentineQuestion.textContent = "Yayyyy! I knew it! ❤️";
-            
-            // Step complete hone ke baad Slide 2 par switch
             setTimeout(() => {
                 slide1.style.opacity = '0';
                 setTimeout(() => {
@@ -120,23 +127,16 @@
                     slide2.style.display = 'block';
                     startHeartAnimation(); 
                 }, 800);
-            }, 2000); // 2 seconds wait karega taaki "Yay" message dikhe
+            }, 2000);
         });
 
         function startHeartAnimation() {
-            // ... (Heart animation logic same as before) ...
             var settings = { particles: { length: 500, duration: 2, velocity: 100, effect: -0.75, size: 30 } };
             var canvas = document.getElementById('pinkboard');
             var context = canvas.getContext('2d');
-            function onResize() { canvas.width = canvas.clientWidth; canvas.height = canvas.clientHeight; }
-            window.onresize = onResize;
-            onResize();
-            function pointOnHeart(t) {
-                return {
-                    x: 160 * Math.pow(Math.sin(t), 3),
-                    y: 130 * Math.cos(t) - 50 * Math.cos(2 * t) - 20 * Math.cos(3 * t) - 10 * Math.cos(4 * t) + 25
-                };
-            }
+            function onResize() { canvas.width = window.innerWidth; canvas.height = window.innerHeight; }
+            window.onresize = onResize; onResize();
+            function pointOnHeart(t) { return { x: 160 * Math.pow(Math.sin(t), 3), y: 130 * Math.cos(t) - 50 * Math.cos(2 * t) - 20 * Math.cos(3 * t) - 10 * Math.cos(4 * t) + 25 }; }
             var image = (function() {
                 var c = document.createElement('canvas'), ctx = c.getContext('2d');
                 c.width = c.height = settings.particles.size;
@@ -157,10 +157,8 @@
                 let p = pointOnHeart(Math.PI - 2 * Math.PI * Math.random());
                 particles.push({x: canvas.width/2 + p.x, y: canvas.height/2 - p.y, age: 0, vx: p.x/10, vy: -p.y/10});
                 for(let i=0; i<particles.length; i++) {
-                    let pt = particles[i];
-                    pt.x += pt.vx * 0.05; pt.y += pt.vy * 0.05; pt.age += 0.01;
-                    context.globalAlpha = 1 - pt.age/2;
-                    context.drawImage(image, pt.x, pt.y, 20, 20);
+                    let pt = particles[i]; pt.x += pt.vx * 0.05; pt.y += pt.vy * 0.05; pt.age += 0.01;
+                    context.globalAlpha = 1 - pt.age/2; context.drawImage(image, pt.x, pt.y, 25, 25);
                     if(pt.age > 2) { particles.splice(i, 1); i--; }
                 }
             }
